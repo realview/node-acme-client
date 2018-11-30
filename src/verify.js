@@ -4,6 +4,7 @@
 
 const Promise = require('bluebird');
 const dns = Promise.promisifyAll(require('dns'));
+dns.setServers(["8.8.8.8"]);
 const axios = require('axios');
 const debug = require('debug')('acme-client');
 
@@ -52,7 +53,8 @@ async function verifyHttpChallenge(authz, challenge, keyAuthorization, suffix = 
 async function verifyDnsChallenge(authz, challenge, keyAuthorization, prefix = '_acme-challenge.') {
     debug(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`);
     const challengeRecord = `${prefix}${authz.identifier.value}`;
-    const result = await dns.resolveTxtAsync(challengeRecord);
+    const result = await dns.resolveCnameAsync(challengeRecord)
+    .then(r => dns.resolveTxtAsync(r[0]));
     const records = [].concat(...result);
 
     debug(`Query successful, found ${records.length} DNS TXT records`);
