@@ -5,7 +5,7 @@
 const Promise = require('bluebird');
 const Backoff = require('backo2');
 const debug = require('debug')('acme-client');
-
+const eventLog = require ('./eventlog')
 
 /**
  * Retry promise
@@ -30,7 +30,7 @@ async function retryPromise(fn, attempts, backoff) {
 
         const duration = backoff.duration();
         debug(`Promise rejected attempt #${backoff.attempts}, retrying in ${duration}ms: ${e.message}`);
-
+        eventLog.emit(`Verification Attempt #${backoff.attempts}, retrying in ${duration}ms: ${e.message}`,opts.authClientId)
         await Promise.delay(duration);
         return retryPromise(fn, attempts, backoff);
     }

@@ -10,7 +10,7 @@ const AcmeApi = require('./api');
 const verify = require('./verify');
 const helper = require('./helper');
 const auto = require('./auto');
-
+const eventLog = require ('./eventlog')
 
 /**
  * Default options
@@ -306,7 +306,7 @@ class AcmeClient {
      * @returns {Promise}
      */
 
-    async verifyChallenge(authz, challenge) {
+    async verifyChallenge(authz, challenge,authClientId) {
         if (!authz.url || !challenge.url) {
             throw new Error('Unable to verify ACME challenge, URL not found');
         }
@@ -318,11 +318,11 @@ class AcmeClient {
         const keyAuthorization = await this.getChallengeKeyAuthorization(challenge);
 
         const verifyFn = async () => {
-            await verify[challenge.type](authz, challenge, keyAuthorization);
+            await verify[challenge.type](authz, challenge, keyAuthorization,authClientId);
         };
 
         debug('Waiting for ACME challenge verification', this.backoffOpts);
-        return helper.retry(verifyFn, this.backoffOpts);
+        return helper.retry(verifyFn, this.backoffOpts,authClientId);
     }
 
 
