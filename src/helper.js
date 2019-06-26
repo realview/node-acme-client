@@ -16,7 +16,7 @@ const eventLog = require('./eventlog');
  * @returns {Promise}
  */
 
-async function retryPromise(fn, attempts, backoff) {
+async function retryPromise(fn, attempts, backoff, authClientId) {
     let aborted = false;
 
     try {
@@ -30,9 +30,9 @@ async function retryPromise(fn, attempts, backoff) {
 
         const duration = backoff.duration();
         debug(`Promise rejected attempt #${backoff.attempts}, retrying in ${duration}ms: ${e.message}`);
-        //  eventLog.emit(`Verification Attempt #${backoff.attempts}, retrying in ${duration}ms: ${e.message}`,opts.authClientId)
+        eventLog.emit(`Verification Attempt #${backoff.attempts}, retrying in ${duration}ms: ${e.message}`, authClientId);
         await Promise.delay(duration);
-        return retryPromise(fn, attempts, backoff);
+        return retryPromise(fn, attempts, backoff, authClientId);
     }
 }
 
@@ -48,9 +48,9 @@ async function retryPromise(fn, attempts, backoff) {
  * @returns {Promise}
  */
 
-function retry(fn, { attempts = 5, min = 5000, max = 30000 } = {}) {
+function retry(fn, { attempts = 5, min = 5000, max = 30000 } = {}, authClientId) {
     const backoff = new Backoff({ min, max });
-    return retryPromise(fn, attempts, backoff);
+    return retryPromise(fn, attempts, backoff, authClientId);
 }
 
 

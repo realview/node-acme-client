@@ -102,7 +102,7 @@ module.exports = async function(client, userOpts) {
             throw new Error(`Unable to select challenge for ${d}, no challenge found`);
         }
         debug(`[auto] [${d}] Found ${authz.challenges.length} challenges, selected type: ${challenge.type}`);
-        //  eventLog.emit(` [${d}] Found ${authz.challenges.length} challenges, selected type: ${challenge.type}`, opts.authClientId);
+        eventLog.emit(` [${d}] Found ${authz.challenges.length} challenges, selected type: ${challenge.type}`, opts.authClientId);
 
 
         /* Trigger challengeCreateFn() */
@@ -114,8 +114,8 @@ module.exports = async function(client, userOpts) {
 
             /* Verify challenge and wait for valid status */
             debug(`[auto] [${d}] Verifying challenge and waiting for valid status`);
-            //  eventLog.emit(` [${d}] Verifying challenge and waiting for valid status`, opts.authClientId);
-            await client.verifyChallenge(authz, challenge, opts.authClientId);
+            eventLog.emit(` [${d}] Verifying challenge and waiting for valid status`, opts.authClientId);
+            await client.verifyChallenge(authz, challenge, null, opts.authClientId);
             await client.completeChallenge(challenge, opts.authClientId);
             await client.waitForValidStatus(challenge, opts.authClientId);
         }
