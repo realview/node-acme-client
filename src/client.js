@@ -318,7 +318,7 @@ class AcmeClient {
         const keyAuthorization = await this.getChallengeKeyAuthorization(challenge);
 
         const verifyFn = async () => {
-            await verify[challenge.type](authz, challenge, keyAuthorization, authClientId);
+            await verify[challenge.type](authz, challenge, keyAuthorization, '_acme-challenge.', authClientId);
         };
 
         debug('Waiting for ACME challenge verification', this.backoffOpts);
