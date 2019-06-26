@@ -8,11 +8,7 @@ function emit(msg, authClientId) {
     };
     eventEmitter.emit('acme', payload);
 }
-function api() {
-    this.emit = emit;
-    return this;
-}
 
 
-module.exports = api;
+module.exports = { emit };
 
