@@ -1,20 +1,17 @@
-const events = require("events")
+const events = require('events');
 
 const eventEmitter = new events.EventEmitter();
-function api() {
 
-    this.emit = emit
+function emit(msg, authClientId) {
+    const payload = {
+        msg, authClientId
+    };
+    eventEmitter.emit('acme', payload);
+}
+function api() {
+    this.emit = emit;
 }
 
 
-    function emit(msg,authClientId)  {
-
-        let payload = {
-            msg,authClientId
-        }
-        eventEmitter.emit("acme", payload)
-    }
-
-
-module.exports = api
+module.exports = api;
 

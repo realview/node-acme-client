@@ -5,7 +5,7 @@
 const Promise = require('bluebird');
 const debug = require('debug')('acme-client');
 const forge = require('./crypto/forge');
-const eventLog = require ('./eventlog')
+const eventLog = require('./eventlog');
 
 
 const defaultOpts = {
@@ -15,7 +15,7 @@ const defaultOpts = {
     challengePriority: ['http-01', 'dns-01'],
     challengeCreateFn: async () => { throw new Error('Missing challengeCreateFn()'); },
     challengeRemoveFn: async () => { throw new Error('Missing challengeRemoveFn()'); },
-    authClientId:""
+    authClientId: ''
 };
 
 
@@ -30,7 +30,7 @@ const defaultOpts = {
 module.exports = async function(client, userOpts) {
     const opts = Object.assign({}, defaultOpts, userOpts);
     const accountPayload = { termsOfServiceAgreed: opts.termsOfServiceAgreed };
-   
+
     if (!Buffer.isBuffer(opts.csr)) {
         opts.csr = Buffer.from(opts.csr);
     }
@@ -82,7 +82,7 @@ module.exports = async function(client, userOpts) {
     /**
      * Resolve and satisfy challenges
      */
-  
+
     debug('[auto] Resolving and satisfying authorization challenges');
 
     const challengePromises = authorizations.map(async (authz) => {
@@ -101,8 +101,9 @@ module.exports = async function(client, userOpts) {
         if (!challenge) {
             throw new Error(`Unable to select challenge for ${d}, no challenge found`);
         }
-        eventLog.emit(` [${d}] Found ${authz.challenges.length} challenges, selected type: ${challenge.type}`,opts.authClientId)
         debug(`[auto] [${d}] Found ${authz.challenges.length} challenges, selected type: ${challenge.type}`);
+        eventLog.emit(` [${d}] Found ${authz.challenges.length} challenges, selected type: ${challenge.type}`, opts.authClientId);
+
 
         /* Trigger challengeCreateFn() */
         debug(`[auto] [${d}] Trigger challengeCreateFn()`);
@@ -113,10 +114,10 @@ module.exports = async function(client, userOpts) {
 
             /* Verify challenge and wait for valid status */
             debug(`[auto] [${d}] Verifying challenge and waiting for valid status`);
-            eventLog.emit(` [${d}] Verifying challenge and waiting for valid status`,opts.authClientId)
-            await client.verifyChallenge(authz, challenge,opts.authClientId);
-            await client.completeChallenge(challenge,opts.authClientId);
-            await client.waitForValidStatus(challenge,opts.authClientId);
+            eventLog.emit(` [${d}] Verifying challenge and waiting for valid status`, opts.authClientId);
+            await client.verifyChallenge(authz, challenge, opts.authClientId);
+            await client.completeChallenge(challenge, opts.authClientId);
+            await client.waitForValidStatus(challenge, opts.authClientId);
         }
         finally {
             /* Trigger challengeRemoveFn(), suppress errors */

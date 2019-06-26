@@ -4,10 +4,11 @@
 
 const Promise = require('bluebird');
 const dns = Promise.promisifyAll(require('dns'));
-dns.setServers(["8.8.8.8"]);
+
+dns.setServers(['8.8.8.8']);
 const axios = require('axios');
 const debug = require('debug')('acme-client');
-const eventLog = require ('./eventlog')
+const eventLog = require('./eventlog');
 
 /**
  * Verify ACME HTTP challenge
@@ -50,12 +51,12 @@ async function verifyHttpChallenge(authz, challenge, keyAuthorization, suffix = 
  * @returns {Promise<boolean>}
  */
 
-async function verifyDnsChallenge(authz, challenge, keyAuthorization, prefix = '_acme-challenge.',authClientId) {
+async function verifyDnsChallenge(authz, challenge, keyAuthorization, prefix = '_acme-challenge.', authClientId) {
     debug(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`);
-    eventLog.emit(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`,opts.authClientId)
+    eventLog.emit(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`, authClientId);
     const challengeRecord = `${prefix}${authz.identifier.value}`;
     const result = await dns.resolveCnameAsync(challengeRecord)
-    .then(r => dns.resolveTxtAsync(r[0]));
+        .then(r => dns.resolveTxtAsync(r[0]));
     const records = [].concat(...result);
 
     debug(`Query successful, found ${records.length} DNS TXT records`);
@@ -63,8 +64,9 @@ async function verifyDnsChallenge(authz, challenge, keyAuthorization, prefix = '
     if (records.indexOf(keyAuthorization) === -1) {
         throw new Error(`Authorization not found in DNS TXT records for ${authz.identifier.value}`);
     }
-    eventLog.emit(`Key authorization match for ${challenge.type}/${authz.identifier.value}`,opts.authClientId)
     debug(`Key authorization match for ${challenge.type}/${authz.identifier.value}, ACME challenge verified`);
+    eventLog.emit(`Key authorization match for ${challenge.type}/${authz.identifier.value}`, authClientId);
+
     return true;
 }
 
