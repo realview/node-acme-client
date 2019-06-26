@@ -53,7 +53,7 @@ async function verifyHttpChallenge(authz, challenge, keyAuthorization, suffix = 
 
 async function verifyDnsChallenge(authz, challenge, keyAuthorization, prefix = '_acme-challenge.', authClientId) {
     debug(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`);
-    eventLog.emit(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`, authClientId);
+    // eventLog.emit(`Resolving DNS TXT records for ${authz.identifier.value}, prefix: ${prefix}`, authClientId);
     const challengeRecord = `${prefix}${authz.identifier.value}`;
     const result = await dns.resolveCnameAsync(challengeRecord)
         .then(r => dns.resolveTxtAsync(r[0]));
@@ -65,7 +65,7 @@ async function verifyDnsChallenge(authz, challenge, keyAuthorization, prefix = '
         throw new Error(`Authorization not found in DNS TXT records for ${authz.identifier.value}`);
     }
     debug(`Key authorization match for ${challenge.type}/${authz.identifier.value}, ACME challenge verified`);
-    eventLog.emit(`Key authorization match for ${challenge.type}/${authz.identifier.value}`, authClientId);
+    // eventLog.emit(`Key authorization match for ${challenge.type}/${authz.identifier.value}`, authClientId);
 
     return true;
 }

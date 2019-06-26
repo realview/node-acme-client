@@ -10,6 +10,7 @@ function emit(msg, authClientId) {
 }
 function api() {
     this.emit = emit;
+    return this;
 }
 
 
