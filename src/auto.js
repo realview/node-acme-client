@@ -115,7 +115,7 @@ module.exports = async function(client, userOpts) {
             /* Verify challenge and wait for valid status */
             debug(`[auto] [${d}] Verifying challenge and waiting for valid status`);
             eventLog.emit(` [${d}] Verifying challenge and waiting for valid status`, opts.authClientId);
-            await client.verifyChallenge(authz, challenge, null, opts.authClientId);
+            await client.verifyChallenge(authz, challenge, opts.authClientId);
             await client.completeChallenge(challenge, opts.authClientId);
             await client.waitForValidStatus(challenge, opts.authClientId);
         }

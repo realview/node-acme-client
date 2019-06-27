@@ -321,7 +321,7 @@ class AcmeClient {
             await verify[challenge.type](authz, challenge, keyAuthorization, '_acme-challenge.', authClientId);
         };
 
-        debug('Waiting for ACME challenge verification', this.backoffOpts);
+        debug('Waiting for ACME challenge verification', this.backoffOpts, authClientId);
         return helper.retry(verifyFn, this.backoffOpts, authClientId);
     }
 
